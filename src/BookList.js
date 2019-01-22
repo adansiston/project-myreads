@@ -6,71 +6,80 @@ class BookList extends Component {
 
   state = {
     books: [],
-    searchedBooks: []
+    searchedBooks: [],
+    query: '',
   }
 
+
+
+
+
+  updateQuery = (query) => {
+    //console.log('111:', query);
+    this.setState(
+      { query: query.trim() }
+      ,this.searchBooks(this.state.query)
+      ,console.log('busca:', this.state.query)
+    )
+  };
   
-  
+
 
   componentDidMount() {
     BooksAPI.getAll()
       .then((books) => {
-        this.setState(() => ({
-          books
-        }))
-        console.log('livros', this.state.books);
-        this.searchBooks('li');
+        this.setState(() => ({books}))
+        this.setState(() => ({searchedBooks: books}))
       })
   }
 
 
-  compare(obj, term){
+  compare(obj, term) {
+    //console.log('no compare', term, obj)
     let found = false;
     Object.entries(obj).forEach(entry => {
       let key = entry[0];
       let value = entry[1];
       let word = '';
-      
-      if (Array.isArray(entry[1])){
-        entry[1].forEach(function(entry) {
-          //console.log('entry', entry);
-          word = entry.toString();
-          if (word.toLowerCase().search(term.toLowerCase()) !== -1){
+
+
+      if (
+        entry[0] === 'subtitle' ||
+        entry[0] === 'authors' ||
+        entry[0] === 'publisher' ||
+        entry[0] === 'description' ||
+        entry[0] === 'categories' ||
+        entry[0] === 'language' ||
+        entry[0] === 'title'
+      ) {
+        if (Array.isArray(entry[1])) {
+          entry[1].forEach(function (entry) {
+            //console.log('entry', entry);
+            word = entry.toString();
+            if (word.toLowerCase().search(term.toLowerCase()) !== -1) {
+              found = true;
+            }
+          });
+        } else {
+          word = entry[1].toString();
+          if (word.toLowerCase().search(term.toLowerCase()) !== -1) {
             found = true;
           }
-        });
-      } else {
-        word = entry[1].toString();
-        if (word.toLowerCase().search(term.toLowerCase()) !== -1){
-          found = true;
         }
       }
     });
-    //console.log('resultado = ', found);
+    return found;
   }
 
-  searchBooks(term){
+  searchBooks(term) {
     let outros = [];
 
-    //var i;
-    //for (i = 0; i < this.state.books.length; i++) { 
-    //  let b = this.state.books[i];
-      
-    //  if(this.compare(b, term)){
-    //    outros.push(b);
-    //  }
-    //}
+    this.state.books.map((b) => (
+      (this.compare(b, term) && outros.push(b))
+    ));
 
-    //this.state.books.map(function(b){
-    //    if(this.compare(b, term)){
-    //      outros.push(b);
-    //    }
-    //  });
-
-    //let outros = this.state.books.filter(function(book){
-    //  return (this.compare(book, term) && book);
-    //});
-    console.log('outros', outros);
+    this.setState({ searchBooks: outros });
+    console.log('searchBooks', this.state.searchBooks);
   }
 
   renderStyle(url) {
@@ -83,12 +92,27 @@ class BookList extends Component {
 
   render() {
 
-    let books = this.state.books;
-
     return (
       <div>
+        <div className="search-books-bar">
+          <Link to='/'><button className="close-search">Close</button></Link>
+          <div className="search-books-input-wrapper">
+            <input
+              type="text"
+              placeholder="Search by title or author"
+              value={this.query}
+              onChange={(event) => this.updateQuery(event.target.value)}
+            />
+          </div>
+        </div>
+        <div className="search-books-results">
+          <ol className="books-grid"></ol>
+        </div>
+
+
         <ol className='contact-list'>
-          {books.map((book) => (
+        {console.log('no loop->', this.state.searchedBooks)}
+          {this.state.searchedBooks.map((book) => (
             <li key={book.id}>
               <div className="book">
                 <div className="book-top">
