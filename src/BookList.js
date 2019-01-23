@@ -6,21 +6,14 @@ class BookList extends Component {
 
   state = {
     books: [],
-    searchedBooks: [],
     query: '',
   }
 
-
-
-
+  searchedBooks =  []
 
   updateQuery = (query) => {
-    //console.log('111:', query);
-    this.setState(
-      { query: query.trim() }
-      ,this.searchBooks(this.state.query)
-      ,console.log('busca:', this.state.query)
-    )
+    this.setState({ query: query.trim() });
+    this.searchBooks(query);
   };
   
 
@@ -28,20 +21,16 @@ class BookList extends Component {
   componentDidMount() {
     BooksAPI.getAll()
       .then((books) => {
+        this.searchedBooks = books;
         this.setState(() => ({books}))
-        this.setState(() => ({searchedBooks: books}))
       })
   }
 
 
   compare(obj, term) {
-    //console.log('no compare', term, obj)
     let found = false;
     Object.entries(obj).forEach(entry => {
-      let key = entry[0];
-      let value = entry[1];
       let word = '';
-
 
       if (
         entry[0] === 'subtitle' ||
@@ -54,7 +43,6 @@ class BookList extends Component {
       ) {
         if (Array.isArray(entry[1])) {
           entry[1].forEach(function (entry) {
-            //console.log('entry', entry);
             word = entry.toString();
             if (word.toLowerCase().search(term.toLowerCase()) !== -1) {
               found = true;
@@ -72,25 +60,29 @@ class BookList extends Component {
   }
 
   searchBooks(term) {
-    let outros = [];
+    this.searchedBooks = [];
 
     this.state.books.map((b) => (
-      (this.compare(b, term) && outros.push(b))
+      (this.compare(b, term) && this.searchedBooks.push(b))
     ));
-
-    this.setState({ searchBooks: outros });
-    console.log('searchBooks', this.state.searchBooks);
   }
 
   renderStyle(url) {
-    //console.log("came here", url);
     return (
       <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${url})` }}></div>
     )
   }
 
+  change(aaa) {
+    console.log('foioooo', aaa);
+    //BooksAPI.update
+  }
+
+  
 
   render() {
+
+    let searchedBooks = this.searchedBooks;
 
     return (
       <div>
@@ -99,7 +91,7 @@ class BookList extends Component {
           <div className="search-books-input-wrapper">
             <input
               type="text"
-              placeholder="Search by title or author"
+              placeholder="Search by title, subtitle, authors, publisher, description, categories or language"
               value={this.query}
               onChange={(event) => this.updateQuery(event.target.value)}
             />
@@ -111,14 +103,13 @@ class BookList extends Component {
 
 
         <ol className='contact-list'>
-        {console.log('no loop->', this.state.searchedBooks)}
-          {this.state.searchedBooks.map((book) => (
+          {searchedBooks.map((book) => (
             <li key={book.id}>
               <div className="book">
                 <div className="book-top">
                   {this.renderStyle(book.imageLinks.smallThumbnail)}
                   <div className="book-shelf-changer">
-                    <select>
+                    <select id={book.id} onChange={this.change('a')} value={this.state.value}>
                       <option value="move" disabled>Move to...</option>
                       <option value="currentlyReading">Currently Reading</option>
                       <option value="wantToRead">Want to Read</option>
@@ -133,8 +124,6 @@ class BookList extends Component {
             </li>
           ))}
         </ol>
-
-
       </div>
     )
   }
