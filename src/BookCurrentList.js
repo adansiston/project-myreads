@@ -61,7 +61,7 @@ class BookCurrentList extends Component {
 
   render() {
     this.bookList = this.state.books;
-    let categories = ['currentlyReading', 'wantToRead', 'read', 'none']
+    let categories = ['currentlyReading', 'wantToRead', 'read']
 
 
     return (

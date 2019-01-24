@@ -8,7 +8,6 @@ class AddBook extends Component {
     books: [],
   }
 
-
   handleChangeList = (books) => {
     this.setState({ books: books });
     this.props.updateBooList(books);

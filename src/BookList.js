@@ -8,9 +8,10 @@ class BookList extends Component {
   state = {
     books: [],
     query: '',
+    searchedBooks: [],
   }
 
-  searchedBooks = []
+  
 
   updateQuery = (query) => {
     this.setState({ query: query.trim() });
@@ -20,17 +21,13 @@ class BookList extends Component {
 
 
   componentDidMount() {
-    if (this.props.books.length < 1) {
-      BooksAPI.getAll()
-        .then((books) => {
-          this.searchedBooks = books;
-          this.setState(() => ({ books }))
-          //console.log('buscou todos', books)
-        })
-    } else {
-      this.searchedBooks = this.props.books;
-      this.setState(() => ({ books: this.props.books }))
-    }
+    BooksAPI.getAll()
+      .then((books) => {
+        this.setState(() => ({ searchedBooks: books }))
+        //this.searchedBooks = books;
+        this.setState(() => ({ books }))
+        //console.log('buscou todos', books)
+    })
   }
 
 
@@ -68,11 +65,16 @@ class BookList extends Component {
   }
 
   searchBooks(term) {
-    this.searchedBooks = [];
+    BooksAPI.search(term)
+    .then((books) => {
+      console.log('search books', books);
+      this.setState(() => ({ searchedBooks: books }))
+    })
 
-    this.state.books.map((b) => (
-      (this.compare(b, term) && this.searchedBooks.push(b))
-    ));
+
+    // this.state.books.map((b) => (
+    //   (this.compare(b, term) && this.searchedBooks.push(b))
+    // ));
     //console.log('this.searchedBooks', this.searchedBooks);
   }
 
@@ -123,7 +125,31 @@ class BookList extends Component {
 
   render() {
 
-    let searchedBooks = this.searchedBooks;
+    let searchedBooks = this.state.searchedBooks;
+    //console.log('palavra', this.state.query);
+    console.log('======================================================');
+    console.log('let searchedBooks', searchedBooks);
+    console.log('tamanho da let searchedBooks', searchedBooks.length);
+    searchedBooks.map((b) => {
+      console.log('-------------------');
+      console.log('image e autor antes', b.authors, b.imageLinks);
+      console.log('imageLinks', b.hasOwnProperty('imageLinks'));
+      console.log('authors', b.hasOwnProperty('authors'));
+      !(b.hasOwnProperty('imageLinks')) && (console.log('trocou link'));
+      !(b.hasOwnProperty('authors')) && (console.log('trocou autor'));
+      !(b.hasOwnProperty('imageLinks')) && (b['imageLinks.smallThumbnail'] = '');
+      !(b.hasOwnProperty('authors')) && (b['authors'] = ['No Authors']);
+      !(b.hasOwnProperty('imageLinks')) && (console.log(b.imageLinks));
+      !(b.hasOwnProperty('authors')) && (console.log(b.authors));
+      
+    });
+    // console.log('------------------------');
+    // searchedBooks.map((b) => {
+    //   console.log('imageLinks', b.hasOwnProperty('imageLinks'));
+    //   console.log('authors', b.hasOwnProperty('authors'));
+    //   //!(b.hasOwnProperty('imageLinks')) && (searchedBooks.imageLinks.smallThumbnail = '');
+    //   //!(b.hasOwnProperty('authors')) && (searchedBooks.authors = ['No Authors']);
+    // });
 
     return (
       <div>
@@ -149,7 +175,7 @@ class BookList extends Component {
               <li key={book.id}>
                 <div className="book">
                   <div className="book-top">
-                    {this.renderStyle(book.imageLinks.smallThumbnail)}
+                    {/* {this.renderStyle(book.imageLinks.smallThumbnail)} */}
                     <div className="book-shelf-changer">
                       <select id={book.id} onChange={this.change} value={this.state.value} defaultValue={book.shelf}>
                         <option value="move" disabled>Move to...</option>

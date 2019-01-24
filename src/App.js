@@ -21,7 +21,7 @@ class BooksApp extends Component {
   render() {
     return (
         <div className="app">
-          <Route exact path='/create' render={({ history }) => (
+          <Route exact path='/search' render={({ history }) => (
             <AddBook 
               updateBooList={(books) => {
                 this.handleChangeList(books)
@@ -34,7 +34,7 @@ class BooksApp extends Component {
             <div>
               <BookCurrentList books={this.state.books}/>
               <div className="open-search">
-              <Link to='/create'><button>Add a book</button></Link>
+              <Link to='/search'><button>Add a book</button></Link>
               </div>
             </div>
         )}/>
