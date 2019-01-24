@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
 
+
 class BookList extends Component {
 
   state = {
@@ -9,20 +10,21 @@ class BookList extends Component {
     query: '',
   }
 
-  searchedBooks =  []
+  searchedBooks = []
 
   updateQuery = (query) => {
     this.setState({ query: query.trim() });
     this.searchBooks(query);
   };
-  
+
 
 
   componentDidMount() {
     BooksAPI.getAll()
       .then((books) => {
         this.searchedBooks = books;
-        this.setState(() => ({books}))
+        this.setState(() => ({ books }))
+        //console.log('buscou todos', books)
       })
   }
 
@@ -65,6 +67,7 @@ class BookList extends Component {
     this.state.books.map((b) => (
       (this.compare(b, term) && this.searchedBooks.push(b))
     ));
+    //console.log('this.searchedBooks', this.searchedBooks);
   }
 
   renderStyle(url) {
@@ -73,12 +76,47 @@ class BookList extends Component {
     )
   }
 
-  change(aaa) {
-    console.log('foioooo', aaa);
-    //BooksAPI.update
+
+
+  change = event => {
+    let status = event.target.value;
+    let bookId = event.target.id;
+
+    var bookAux = this.searchedBooks.filter(function (b) {
+      return b.id === bookId
+    });
+
+    bookAux.shelf = status;
+
+    BooksAPI.update(bookAux, status)
+      .then((res) => {
+        // Não estou conseguindo atualizar o backend.
+        //console.log('res', res);
+
+
+        for (let i = 0; i < this.searchedBooks.length; i++) {
+          if (this.searchedBooks[i].id === bookId) {
+            this.searchedBooks[i].shelf = status;
+          }
+        }
+        let books = this.state.books;
+        for (let i = 0; i < books.length; i++) {
+          if (books[i].id === bookId) {
+            books[i].shelf = status;
+          }
+        }
+        this.setState({ books: books },
+          //() => console.log('statebooks', this.state.books)
+        );
+
+      });
+
+
+
+
   }
 
-  
+
 
   render() {
 
@@ -109,7 +147,7 @@ class BookList extends Component {
                 <div className="book-top">
                   {this.renderStyle(book.imageLinks.smallThumbnail)}
                   <div className="book-shelf-changer">
-                    <select id={book.id} onChange={this.change('a')} value={this.state.value}>
+                    <select id={book.id} onChange={this.change} value={this.state.value} defaultValue={book.shelf}>
                       <option value="move" disabled>Move to...</option>
                       <option value="currentlyReading">Currently Reading</option>
                       <option value="wantToRead">Want to Read</option>
