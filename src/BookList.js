@@ -20,13 +20,19 @@ class BookList extends Component {
 
 
   componentDidMount() {
-    BooksAPI.getAll()
-      .then((books) => {
-        this.searchedBooks = books;
-        this.setState(() => ({ books }))
-        //console.log('buscou todos', books)
-      })
+    if (this.props.books.length < 1) {
+      BooksAPI.getAll()
+        .then((books) => {
+          this.searchedBooks = books;
+          this.setState(() => ({ books }))
+          //console.log('buscou todos', books)
+        })
+    } else {
+      this.searchedBooks = this.props.books;
+      this.setState(() => ({ books: this.props.books }))
+    }
   }
+
 
 
   compare(obj, term) {
@@ -110,10 +116,7 @@ class BookList extends Component {
         );
 
       });
-
-
-
-
+    this.props.updateBooList(this.state.books);
   }
 
 
@@ -141,26 +144,33 @@ class BookList extends Component {
 
 
         <ol className='contact-list'>
-          {searchedBooks.map((book) => (
-            <li key={book.id}>
-              <div className="book">
-                <div className="book-top">
-                  {this.renderStyle(book.imageLinks.smallThumbnail)}
-                  <div className="book-shelf-changer">
-                    <select id={book.id} onChange={this.change} value={this.state.value} defaultValue={book.shelf}>
-                      <option value="move" disabled>Move to...</option>
-                      <option value="currentlyReading">Currently Reading</option>
-                      <option value="wantToRead">Want to Read</option>
-                      <option value="read">Read</option>
-                      <option value="none">None</option>
-                    </select>
+          {searchedBooks.map((book) => {
+            return (
+              <li key={book.id}>
+                <div className="book">
+                  <div className="book-top">
+                    {this.renderStyle(book.imageLinks.smallThumbnail)}
+                    <div className="book-shelf-changer">
+                      <select id={book.id} onChange={this.change} value={this.state.value} defaultValue={book.shelf}>
+                        <option value="move" disabled>Move to...</option>
+                        <option value="currentlyReading">Currently Reading</option>
+                        <option value="wantToRead">Want to Read</option>
+                        <option value="read">Read</option>
+                        <option value="none">None</option>
+                      </select>
+                    </div>
                   </div>
+                  <div className="book-title">{book.title}</div>
+                  {book.authors.map((author) => {
+                    return (
+                      <div key={author} className="book-authors">
+                        {author}<br></br>
+                      </div>
+                  )})}
                 </div>
-                <div className="book-title">{book.title}</div>
-                <div className="book-authors">{book.authors}</div>
-              </div>
-            </li>
-          ))}
+              </li>
+            )
+          })}
         </ol>
       </div>
     )

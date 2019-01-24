@@ -10,25 +10,29 @@ import AddBook from './AddBook'
 
 class BooksApp extends Component {
   state = {
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
+    books: [],
     showSearchPage: false
+  }
+
+  handleChangeList = (books) => {
+    this.setState({ books: books });
   }
 
   render() {
     return (
         <div className="app">
           <Route exact path='/create' render={({ history }) => (
-            <AddBook/>
+            <AddBook 
+              updateBooList={(books) => {
+                this.handleChangeList(books)
+              }}
+              books={this.state.books}
+            />
           )}/>
 
         <Route exact path='/' render={() => (
             <div>
-              <BookCurrentList/>
+              <BookCurrentList books={this.state.books}/>
               <div className="open-search">
               <Link to='/create'><button>Add a book</button></Link>
               </div>
