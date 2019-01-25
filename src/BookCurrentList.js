@@ -10,15 +10,7 @@ class BookCurrentList extends Component {
   categories = [];
 
   componentDidMount() {
-    console.log('na listagemcorrente', this.props.books);
-    if (this.props.books.length < 1) {
-      BooksAPI.getAll()
-        .then((books) => {
-          this.setState(() => ({ books }))
-        })
-    } else {
       this.setState(() => ({ books: this.props.books }))
-    }
   }
 
   renderStyle(url) {
@@ -78,7 +70,7 @@ class BookCurrentList extends Component {
                 {categories.map((cat) => {
                   return (
                     <div key={cat}>
-                      <h2 className="bookshelf-title">{cat === 'currentlyReading' ? 'Currently Reading' : cat === 'wantToRead' ? 'Want To Read' : cat === 'none' && 'No categories'}</h2>
+                      <h2 className="bookshelf-title">{cat === 'currentlyReading' ? 'Currently Reading' : cat === 'wantToRead' ? 'Want To Read' : 'Read'}</h2>
                       <div className="bookshelf-books">
                         <ol className="books-grid">
                           {this.bookList.map((book) => {
