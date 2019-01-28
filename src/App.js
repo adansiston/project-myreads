@@ -9,14 +9,6 @@ import AddBook from './AddBook'
 
 
 class BooksApp extends Component {
-  state = {
-    books: [],
-  }
-
-  handleChangeList = (books) => {
-    this.setState({ books: books });
-  }
-
   render() {
     return (
         <div className="app">
@@ -26,7 +18,7 @@ class BooksApp extends Component {
 
         <Route exact path='/' render={() => (
             <div>
-              <BookShelves books={this.state.books}/>
+              <BookShelves/>
               <div className="open-search">
               <Link to='/search'><button>Add a book</button></Link>
               </div>
