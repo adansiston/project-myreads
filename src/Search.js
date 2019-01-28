@@ -15,12 +15,13 @@ class Search extends Component {
 
 
   componentDidMount() {
-    this.books = this.props.books;
+    
     BooksAPI.getAll()
       .then((allBooks) => {
         this.setState({ searchedBooks: allBooks },
         );
         this.forceUpdate();
+        this.books = this.state.searchedBooks;
       })
   }
 
@@ -35,15 +36,7 @@ class Search extends Component {
     } else {
       BooksAPI.search(term)
         .then((books) => {
-          let stateBooks = this.books;
-          for (let j = 0; j < books.length; j++) {
-            for (let i = 0; i < stateBooks.length; i++) {
-              if (books[j].id === stateBooks[i].id) {
-                books[j] = stateBooks[i];
-              }
-            }
-          }
-          this.setState({ searchedBooks: books });
+        this.setState({ searchedBooks: books });
         })
     }
   }
@@ -103,7 +96,6 @@ class Search extends Component {
       }
     }
     this.books = books
-    this.props.updateBooList(this.books);
   }
 
   containsBook(book, list) {

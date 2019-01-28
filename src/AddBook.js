@@ -8,22 +8,11 @@ class AddBook extends Component {
     books: [],
   }
 
-  handleChangeList = (books) => {
-    this.setState({ books: books });
-    this.props.updateBooList(books);
-  }
-
   render() {
 
     return (
       <div className="search-books">
-      
-        <Search 
-          updateBooList={(books) => {
-            this.handleChangeList(books)
-          }}
-          books={this.props.books}
-        />
+        <Search/>
       </div>
     )
   }
