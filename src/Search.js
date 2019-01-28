@@ -15,7 +15,7 @@ class Search extends Component {
 
 
   componentDidMount() {
-    
+
     BooksAPI.getAll()
       .then((allBooks) => {
         this.setState({ searchedBooks: allBooks },
@@ -32,11 +32,17 @@ class Search extends Component {
 
   searchBooks(term) {
     if (term === '') {
-      this.setState({ searchedBooks: [] });
+      BooksAPI.getAll()
+      .then((allBooks) => {
+        this.setState({ searchedBooks: allBooks },
+        );
+        this.forceUpdate();
+        this.books = this.state.searchedBooks;
+      })
     } else {
       BooksAPI.search(term)
         .then((books) => {
-        this.setState({ searchedBooks: books });
+          this.setState({ searchedBooks: books });
         })
     }
   }
@@ -62,40 +68,9 @@ class Search extends Component {
 
     BooksAPI.update(bookAux, status)
       .then((res) => {
-        //Não estou conseguindo atualizar o backend.
         console.log('res', res);
-      });
+       });
 
-
-      BooksAPI.getAll()
-        .then((books) => {
-            console.log('atualizados all', books);
-        })
-
-
-
-
-    let searchedBooksAux = this.state.searchedBooks;
-    let bookChanged;
-    for (let i = 0; i < searchedBooksAux.length; i++) {
-      if (searchedBooksAux[i].id === bookId) {
-        searchedBooksAux[i].shelf = status;
-        bookChanged = searchedBooksAux[i];
-      }
-    }
-    this.setState({ searchedBooks: searchedBooksAux });
-
-    let books = this.books;
-    if (!this.containsBook(bookChanged, this.books)) {
-      books.push(bookChanged);
-    } else {
-      for (var i = 0; i < books.length; i++) {
-        if (books[i].id === bookChanged.id) {
-          books[i].shelf = bookChanged.shelf;
-        }
-      }
-    }
-    this.books = books
   }
 
   containsBook(book, list) {

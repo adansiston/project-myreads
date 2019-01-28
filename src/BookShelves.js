@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import * as BooksAPI from './BooksAPI'
-import ShowBook from './ShowBook';
-//import { Link } from 'react-router-dom'
+
 
 class BookShelves extends Component {
   state = {
@@ -12,7 +11,6 @@ class BookShelves extends Component {
   componentDidMount() {
     BooksAPI.getAll()
     .then((books) => {
-        console.log('aaaaaaaaaaaaaaatualizados all', books);
         this.setState(() => ({ books: books }))
         this.bookList = books;
     })
@@ -45,9 +43,8 @@ class BookShelves extends Component {
   }
 
   render() {
-    console.log('1');
     this.bookList = this.state.books;
-    console.log('2');
+
     
     this.bookList.map((b) => {
       if (typeof (b.imageLinks) === "undefined") {
@@ -57,14 +54,11 @@ class BookShelves extends Component {
         b.authors = ['No Authors']
       }
     });
-    console.log('3');
     const categories = ['currentlyReading', 'wantToRead', 'read'];
 
-    console.log('4', this.state.books);
     if (this.bookList.length < 1 || this.bookList.length == undefined) {
       this.bookList= [];
     }
-    console.log('saiu this.bookList', this.bookList);
     return (
       <div>
         <div className="list-books">
