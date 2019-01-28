@@ -3,7 +3,7 @@ import { Route } from 'react-router-dom'
 // import * as BooksAPI from './BooksAPI'
 import { Link } from 'react-router-dom'
 import './App.css'
-import BookCurrentList from './BookCurrentList'
+import BookShelves from './BookShelves'
 import AddBook from './AddBook'
 
 
@@ -11,7 +11,6 @@ import AddBook from './AddBook'
 class BooksApp extends Component {
   state = {
     books: [],
-    showSearchPage: false
   }
 
   handleChangeList = (books) => {
@@ -32,7 +31,7 @@ class BooksApp extends Component {
 
         <Route exact path='/' render={() => (
             <div>
-              <BookCurrentList books={this.state.books}/>
+              <BookShelves books={this.state.books}/>
               <div className="open-search">
               <Link to='/search'><button>Add a book</button></Link>
               </div>

@@ -1,16 +1,21 @@
 import React, { Component } from 'react';
 import * as BooksAPI from './BooksAPI'
+import ShowBook from './ShowBook';
 //import { Link } from 'react-router-dom'
 
-class BookCurrentList extends Component {
+class BookShelves extends Component {
   state = {
     books: [],
   }
   bookList = [];
-  categories = [];
 
   componentDidMount() {
-      this.setState(() => ({ books: this.props.books }))
+    BooksAPI.getAll()
+    .then((books) => {
+        console.log('aaaaaaaaaaaaaaatualizados all', books);
+        this.setState(() => ({ books: books }))
+        this.bookList = books;
+    })
   }
 
   renderStyle(url) {
@@ -23,7 +28,7 @@ class BookCurrentList extends Component {
     let status = event.target.value;
     let bookId = event.target.id;
 
-    var bookAux = this.bookList.filter(function (b) {
+    var bookAux = this.bookList.find(function (b) {
       return b.id === bookId
     });
 
@@ -31,34 +36,36 @@ class BookCurrentList extends Component {
 
     BooksAPI.update(bookAux, status)
       .then((res) => {
-        // Não estou conseguindo atualizar o backend.
-        //console.log('res', res);
-
-        for (let i = 0; i < this.bookList.length; i++) {
-          if (this.bookList[i].id === bookId) {
-            this.bookList[i].shelf = status;
-          }
-        }
-        let books = this.state.books;
-        for (let i = 0; i < books.length; i++) {
-          if (books[i].id === bookId) {
-            books[i].shelf = status;
-          }
-        }
-        this.setState({ books: books },
-          //() => console.log('statebooks', this.state.books)
-        );
+        BooksAPI.getAll()
+        .then((books) => {
+            //console.log('atualizados all', books);
+            this.setState(() => ({ books: books }))
+        })
       });
   }
 
   render() {
+    console.log('1');
     this.bookList = this.state.books;
-    let categories = ['currentlyReading', 'wantToRead', 'read']
+    console.log('2');
+    
+    this.bookList.map((b) => {
+      if (typeof (b.imageLinks) === "undefined") {
+        b.imageLinks = BooksAPI.noImage;
+      }
+      if (typeof (b.authors) === "undefined") {
+        b.authors = ['No Authors']
+      }
+    });
+    console.log('3');
+    const categories = ['currentlyReading', 'wantToRead', 'read'];
 
-
+    console.log('4', this.state.books);
+    if (this.bookList.length < 1 || this.bookList.length == undefined) {
+      this.bookList= [];
+    }
+    console.log('saiu this.bookList', this.bookList);
     return (
-
-
       <div>
         <div className="list-books">
           <div className="list-books-title">
@@ -114,4 +121,4 @@ class BookCurrentList extends Component {
   }
 }
 
-export default BookCurrentList
+export default BookShelves
