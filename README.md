@@ -2,11 +2,32 @@
 
 In the MyReads project, you will find a bookcase application that allows you to select and sort the books you have read, are reading or want to read.
 
+The main page shows a list of shelves, each of which contains a series of books. The three shelves are:
+* Currently Reading;
+* Want to Read;
+* Read;
+
+
+Each book has a control that lets you select a bookcase for it. When you select a different shelf, the book is moved there.
+
+The homepage has a link to the search page, which allows you to find books to add to your library.
+This page has a input text that can be used to find books. As the value of the text changes, the books that match that query appear on the page.
+
+
 ## Getting Started
 
+* Clone the my-reads repository: 
+    git clone https://github.com/adansiston/project-myreads.git
+    Alternatively, you can just download and unzip this file instead of cloning the repository.
+
+* Make sure you have installed:
+    - NodeJS
+    - npm
+    
+* Install react-dom: `npm install react react-dom`
 * install all project dependencies with `npm install`
 * start the development server with `npm start`
-* You can copy this project on 'https://github.com/adansiston/project-myreads.git'
+
 
 ## What You're Getting
 ```bash

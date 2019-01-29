@@ -10,7 +10,8 @@ class Search extends Component {
     searchedBooks: [],
   }
 
-  books = [];
+  shelfBooks = [];
+
   noResults = false;
 
 
@@ -19,9 +20,10 @@ class Search extends Component {
     BooksAPI.getAll()
       .then((allBooks) => {
         this.setState({ searchedBooks: allBooks },
+          () => console.log('lista q chegou', allBooks),
+          this.shelfBooks = allBooks,
+          this.forceUpdate()
         );
-        this.forceUpdate();
-        this.books = this.state.searchedBooks;
       })
   }
 
@@ -33,18 +35,45 @@ class Search extends Component {
   searchBooks(term) {
     if (term === '') {
       BooksAPI.getAll()
-      .then((allBooks) => {
-        this.setState({ searchedBooks: allBooks },
-        );
-        this.forceUpdate();
-        this.books = this.state.searchedBooks;
-      })
+        .then((allBooks) => {
+          this.setState({ searchedBooks: allBooks },
+          );
+          this.forceUpdate();
+        })
     } else {
       BooksAPI.search(term)
         .then((books) => {
-          this.setState({ searchedBooks: books });
+          this.setState({ searchedBooks: books },
+            () => this.checkShelves()
+          );
+
         })
     }
+  }
+
+  checkShelves() {
+    let searchedBooks = this.state.searchedBooks;
+    console.log('1111lista searchedBooks', searchedBooks);
+    let shelfBooks = this.shelfBooks;
+
+    console.log('2222this.shelfBooks', shelfBooks);
+    for (var i = 0; i < searchedBooks.length; i++) {
+      //console.log('a ser verificado', searchedBooks[i].title);
+      for (var j = 0; j < shelfBooks.length; j++) {
+        if (searchedBooks[i].id === shelfBooks[j].id) {
+          //console.log('vai receber', shelfBooks[j].shelf);
+          searchedBooks[i].shelf = shelfBooks[j].shelf;
+          console.log('posicao', i);
+          console.log('titulo', searchedBooks[i].title, searchedBooks[i].shelf, 'estaaaaaaaaaaá');
+          break;
+        } else {
+          console.log(i, 'none');
+          searchedBooks[i].shelf = 'none';
+          //console.log('titulo', searchedBooks[i].title, 'não está');
+        }
+      }
+    }
+    console.log('lista trabalhada', searchedBooks);
   }
 
   renderStyle(url) {
@@ -69,7 +98,7 @@ class Search extends Component {
     BooksAPI.update(bookAux, status)
       .then((res) => {
         console.log('res', res);
-       });
+      });
 
   }
 
@@ -89,6 +118,25 @@ class Search extends Component {
 
 
     let searchedBooks = this.state.searchedBooks;
+    let shelfBooks = this.shelfBooks;
+
+    console.log('searchedBooks', searchedBooks);
+    console.log('shelfBooks', shelfBooks);
+
+    //  for (var i = 0; i < searchedBooks.length; i++) {
+    //     for (var j = 0; j < shelfBooks.length; j++) {
+    //       if(searchedBooks[i].id === shelfBooks[j].id){
+    //         console.log('vai receber', shelfBooks[j].shelf);
+    //         searchedBooks[i].shelf = shelfBooks[j].shelf;
+    //         console.log('titulo', searchedBooks[i].title, 'estaaaaaaaaaaá');
+    //       } else {
+    //         searchedBooks[i].shelf = 'none';
+    //         console.log('titulo', searchedBooks[i].title, 'não está');
+    //       }
+    //     }
+    //  }
+
+
     if (searchedBooks.length < 1 || searchedBooks.length == undefined) {
       searchedBooks = [];
       this.noResults = true;

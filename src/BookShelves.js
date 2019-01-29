@@ -36,7 +36,7 @@ class BookShelves extends Component {
       .then((res) => {
         BooksAPI.getAll()
         .then((books) => {
-            //console.log('atualizados all', books);
+            console.log('atualizados all', books);
             this.setState(() => ({ books: books }))
         })
       });
