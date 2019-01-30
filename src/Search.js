@@ -56,10 +56,9 @@ class Search extends Component {
     let addBooks = [];
     let exist;
 
-    console.log('searchedBooks', searchedBooks);
+
     if(shelfBooks.length > 0 && searchedBooks.length > 0){
       shelfBooks.map((ShelfB) => {
-        console.log(ShelfB.title, ShelfB.id);
         var tem = false;
         searchedBooks.map((searchB) => {
           if(ShelfB.id === searchB.id){
@@ -68,15 +67,17 @@ class Search extends Component {
         });
         !tem && addBooks.push(ShelfB);
       });
-      console.log('searchedBooks2', searchedBooks);
       addBooks.map((ab) => {
         searchedBooks.push(ab);
       });
     }
-    if(shelfBooks.length > 0 && searchedBooks.length === 0){
+
+    if(shelfBooks.length > 0 && (searchedBooks.length === 0 || searchedBooks.length === undefined)){
       searchedBooks = shelfBooks;
     }
-    console.log('searchedBooks3', searchedBooks);
+    this.setState({ searchedBooks: searchedBooks },
+      () => this.forceUpdate(),
+    );
   }
 
   checkShelves() {
@@ -108,8 +109,6 @@ class Search extends Component {
 
 
   change = event => {
-    console.log('change');
-
     let status = event.target.value;
     let bookId = event.target.id;
 
@@ -166,7 +165,6 @@ class Search extends Component {
       this.noResults = false;
     }
     searchedBooks.map((b) => {
-      //console.log('-->', b.title, b.shelf);
       if (typeof (b.imageLinks) === "undefined") {
         b.imageLinks = BooksAPI.noImage;
       }
