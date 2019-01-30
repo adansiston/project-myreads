@@ -8,12 +8,11 @@ class BookShelves extends Component {
   }
   bookList = [];
 
-  componentDidMount() {
-    BooksAPI.getAll()
-    .then((books) => {
-        this.setState(() => ({ books: books }))
-        this.bookList = books;
-    })
+  async componentDidMount() {
+    const books = await BooksAPI.getAll();
+    this.setState({ books });
+    this.bookList = books;
+
   }
 
   renderStyle(url) {
