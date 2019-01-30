@@ -97,7 +97,7 @@ class Search extends Component {
     this.setState({ searchedBooks: searchedBooks },
       () => this.forceUpdate(),
     );
-    this.addExistentBooks();
+    //this.addExistentBooks();
   }
 
   renderStyle(url) {
