@@ -28,9 +28,8 @@ class Search extends Component {
 
   updateQuery = (query) => {
     this.setState({ query: query.trim() },
-      () => this.searchBooks(query)
+      () => this.searchBooks(query),
     );
-
   };
 
   searchBooks(term) {
@@ -45,10 +44,39 @@ class Search extends Component {
       BooksAPI.search(term)
         .then((books) => {
           this.setState({ searchedBooks: books },
-            () => this.checkShelves()
+            () => this.checkShelves(),
           );
         })
     }
+  }
+
+  addExistentBooks() {
+    let searchedBooks = this.state.searchedBooks;
+    let shelfBooks = this.shelfBooks;
+    let addBooks = [];
+    let exist;
+
+    console.log('searchedBooks', searchedBooks);
+    if(shelfBooks.length > 0 && searchedBooks.length > 0){
+      shelfBooks.map((ShelfB) => {
+        console.log(ShelfB.title, ShelfB.id);
+        var tem = false;
+        searchedBooks.map((searchB) => {
+          if(ShelfB.id === searchB.id){
+            tem = true;
+          }
+        });
+        !tem && addBooks.push(ShelfB);
+      });
+      console.log('searchedBooks2', searchedBooks);
+      addBooks.map((ab) => {
+        searchedBooks.push(ab);
+      });
+    }
+    if(shelfBooks.length > 0 && searchedBooks.length === 0){
+      searchedBooks = shelfBooks;
+    }
+    console.log('searchedBooks3', searchedBooks);
   }
 
   checkShelves() {
@@ -66,8 +94,9 @@ class Search extends Component {
       }
     }
     this.setState({ searchedBooks: searchedBooks },
-      () => this.forceUpdate()
+      () => this.forceUpdate(),
     );
+    this.addExistentBooks();
   }
 
   renderStyle(url) {
@@ -79,6 +108,8 @@ class Search extends Component {
 
 
   change = event => {
+    console.log('change');
+
     let status = event.target.value;
     let bookId = event.target.id;
 
